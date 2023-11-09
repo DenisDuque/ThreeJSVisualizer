@@ -1,28 +1,83 @@
 import * as THREE from 'three';
 import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { RoomEnvironment } from '../node_modules/three/examples/jsm/environments/RoomEnvironment';
 
+var camera, scene, renderer, controls, directionalLight;
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+function init() {
+    // Creates new Scene
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color("Grey"); // Customize background color as preference
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+    // Creates new Camera [PerspectiveCamera(fov, aspect, near, far)]
+    camera = new THREE.PerspectiveCamera(15, window.innerWidth / window.innerHeight, 0.1, 1000); // Customize as preference
+    camera.position.z = 1; // How far the camera is from the object
+    
+    // Creates new Render
+    renderer = new THREE.WebGLRenderer();
+    // Set render size
+    renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8); // Customize as preference
+    renderer.shadowMap.enabled = true; // Enable shadows
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Shadow type 
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; // Shadow effect
+    renderer.toneMappingExposure = 1; // Shadow exposure
+    // Where the rendered model is shown
+    document.getElementById("modelContainer").appendChild(renderer.domElement); // Change 'canvas-container' for your html element id you want to show your model 
+    /* Note: make sure you change css for applaying the same styles to the new object */
+    
+    // Adding controls to the objects
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enablePan = false; // Disabled moving the object with right click
+    controls.enableDamping = true; // Enables damping (inertia) when rotate objects
+    controls.dampingFactor = 0.05; // Inertia of the object [Note: Required update controls for this feature]
+    /*
+    controls.minPolarAngle = 1; // Unable rotate the model vertically
+    controls.maxPolarAngle = 1; // Unable rotate the model vertically
+    */
+    controls.minDistance = 0.15 ; // Minimum distance you can zoom in
+    controls.maxDistance = 13; // Minimum distance you can zoom out
+    controls.update(); // [Required] Update the controls after changes 
+    
+    // Adding environment on the scene to see the rendered model
+    var environment = new RoomEnvironment(); // Create new environment
+    const pmremGenerator = new THREE.PMREMGenerator( renderer ); // Adds the environment on the scene
+    scene.environment = pmremGenerator.fromScene( environment ).texture; // Adds the textures that the environment creates on the scene
+    pmremGenerator.dispose(); // Optimize the render
+  
+    /* Uncomment if want axes in models for tracking position */
+    /*
+    // Adding axes for model position [XYZ]
+    const axesHelper = new THREE.AxesHelper(5);
+    scene.add(axesHelper);
+  
+    // Custom color axes
+    const colorRed = new THREE.Color(0xFF0000);
+    const colorBlue = new THREE.Color(0x0000FF);
+    const colorGreen = new THREE.Color(0x00FF00);
+    // Setting the colors
+    axesHelper.setColors(colorRed, colorBlue, colorGreen );*/
+  
+    // Adding ambient lights on the scene
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Create Abient Lights
+    scene.add(ambientLight); // Add to the scene
+   
+    // Adding directional light
+    directionalLight = new THREE.DirectionalLight(0xffffff, 2); // Create Directional Light
+    directionalLight.position.set(5, 10, 7); // Set position where the light is coming from
+    directionalLight.castShadow = true; // Enable make shadow
+    directionalLight.shadow.mapSize.width = 1024; // Shadow size
+    directionalLight.shadow.mapSize.height = 1024; // Shadow size
+    directionalLight.shadow.camera.top = 10; // Shadow camera top position
+    directionalLight.shadow.camera.bottom = -10; // Shadow camera bottom position
+    directionalLight.shadow.camera.left = -10; // Shadow camera left position
+    directionalLight.shadow.camera.right = 10; // Shadow camera right position
+    scene.add(directionalLight); // Adding the directional lights on the scene
+}
 
-const controls = new OrbitControls(camera, renderer.domElement);
 const loader = new GLTFLoader();
 
-scene.add(camera);
-scene.background = new THREE.Color(0xAAAAAA);
-camera.position.z = 5;
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
-
-
-console.log("Todo en orden");
-
-loader.load('../src/3dmodels/blackVans.gltf', (gltf) => {
+loader.load('../src/3dmodels/redHeel.gltf', (gltf) => {
     // El modelo se cargó exitosamente
 
     // Accede al objeto 3D del modelo
@@ -39,7 +94,6 @@ loader.load('../src/3dmodels/blackVans.gltf', (gltf) => {
     console.error('Error al cargar el modelo GLTF', error);
 });
 
-
 function animate() {
     requestAnimationFrame(animate);
 
@@ -50,5 +104,6 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Inicia la animación
+// Start functions
+init();
 animate();

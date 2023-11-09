@@ -1,0 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#modelContainer {
+    width: 50%; /* Custom position */
+    height: 100%; /* Custom position */
+}

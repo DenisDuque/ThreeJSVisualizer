@@ -1,10 +1,9 @@
 import * as THREE from 'three';
-import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
+import { ArcballControls } from '../node_modules/three/examples/jsm/controls/ArcballControls.js';
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from '../node_modules/three/examples/jsm/environments/RoomEnvironment';
 
-var camera, scene, renderer, controls, directionalLight;
-
+var camera, scene, renderer, controls, directionalLight, model;
 function init() {
     // Creates new Scene
     scene = new THREE.Scene();
@@ -27,15 +26,15 @@ function init() {
     /* Note: make sure you change css for applaying the same styles to the new object */
     
     // Adding controls to the objects
-    controls = new OrbitControls(camera, renderer.domElement);
+    controls = new ArcballControls(camera, renderer.domElement);
     controls.enablePan = false; // Disabled moving the object with right click
     controls.enableDamping = true; // Enables damping (inertia) when rotate objects
-    controls.dampingFactor = 0.05; // Inertia of the object [Note: Required update controls for this feature]
+    controls.dampingFactor = 100; // Inertia of the object [Note: Required update controls for this feature]
     /*
     controls.minPolarAngle = 1; // Unable rotate the model vertically
     controls.maxPolarAngle = 1; // Unable rotate the model vertically
     */
-    controls.minDistance = 0.15 ; // Minimum distance you can zoom in
+    controls.minDistance = 13 ; // Minimum distance you can zoom in
     controls.maxDistance = 13; // Minimum distance you can zoom out
     controls.update(); // [Required] Update the controls after changes 
     
@@ -57,11 +56,10 @@ function init() {
     const colorGreen = new THREE.Color(0x00FF00);
     // Setting the colors
     axesHelper.setColors(colorRed, colorBlue, colorGreen );*/
-  
     // Adding ambient lights on the scene
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Create Abient Lights
     scene.add(ambientLight); // Add to the scene
-   
+    
     // Adding directional light
     directionalLight = new THREE.DirectionalLight(0xffffff, 2); // Create Directional Light
     directionalLight.position.set(5, 10, 7); // Set position where the light is coming from
@@ -81,12 +79,11 @@ loader.load('../src/3dmodels/redHeel.gltf', (gltf) => {
     // El modelo se cargó exitosamente
 
     // Accede al objeto 3D del modelo
-    const model = gltf.scene;
+    model = gltf.scene;
 
     // Ajusta la posición, escala, rotación, etc., según sea necesario
     model.position.set(0, 0, 0);
     model.scale.set(1, 1, 1);
-    
     // Añade el modelo a la escena
     scene.add(model);
 }, undefined, (error) => {
@@ -103,6 +100,32 @@ function animate() {
     // Renderiza la escena
     renderer.render(scene, camera);
 }
+
+// Buttons
+document.addEventListener('DOMContentLoaded', function() {
+
+    var gizmosBtn = document.getElementById('gizmosBtn');
+    gizmosBtn.addEventListener('click', function() {
+        alert('¡Has hecho clic en el botón!');
+    });
+
+    var flipBtn = document.getElementById('flipBtn');
+    flipBtn.addEventListener('click', function() {
+        alert('¡Has hecho clic en el botón!');
+    });
+
+    var resetBtn = document.getElementById('resetBtn');
+    resetBtn.addEventListener('click', function() {
+        resetBtn.style.transition = 'transform 0.8s ease';
+        resetBtn.style.transform = "rotate(360deg)";
+        setTimeout(function() {
+            resetBtn.style.transition = 'transform 0s ease';
+            resetBtn.style.transform = "rotate(0deg)";
+            resetBtn.style.transition = 'scale 0.8s ease';
+        }, 800);
+        model.position.set(0, 0, 0);
+    });
+});
 
 // Start functions
 init();

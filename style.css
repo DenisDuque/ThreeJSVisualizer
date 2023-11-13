@@ -7,3 +7,33 @@
     width: 50%; /* Custom position */
     height: 100%; /* Custom position */
 }
+
+button {
+    border: none;
+    background: none;
+    width: 4vh;
+    height: 4vh;
+    filter: grayscale(100%);
+    transition: filter 0.8s ease;
+    transition: scale 0.8s ease;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#gizmosBtn {
+    background-image: url("src/img/360.png");
+}
+
+#flipBtn {
+    background-image: url("src/img/flip-horizontal.png");   
+}
+
+#resetBtn {
+    background-image: url("src/img/flechas-circulares.png");
+}
+
+button:hover {
+    filter: grayscale(0%);
+    scale: 105%;
+}

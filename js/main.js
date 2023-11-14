@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { ArcballControls } from '../node_modules/three/examples/jsm/controls/ArcballControls.js';
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from '../node_modules/three/examples/jsm/environments/RoomEnvironment';
-
+import { GUI } from 'dat.gui';
 var camera, scene, renderer, controls, directionalLight, model, modelCopy;
 function init() {
     // Creates new Scene
@@ -14,7 +14,6 @@ function init() {
     // Creates new Camera [PerspectiveCamera(fov, aspect, near, far)]
     camera = new THREE.PerspectiveCamera(15, window.innerWidth / window.innerHeight, 0.1, 1000); // Customize as preference
     camera.position.z = 1; // How far the camera is from the object
-    
     // Creates new Render
     renderer = new THREE.WebGLRenderer();
     // Set render size
@@ -24,7 +23,7 @@ function init() {
     renderer.toneMapping = THREE.ACESFilmicToneMapping; // Shadow effect
     renderer.toneMappingExposure = 1; // Shadow exposure
     // Where the rendered model is shown
-    document.getElementById("modelContainer").appendChild(renderer.domElement); // Change 'canvas-container' for your html element id you want to show your model 
+    document.getElementById("canvasContainer").appendChild(renderer.domElement); // Change 'canvas-container' for your html element id you want to show your model 
     /* Note: make sure you change css for applaying the same styles to the new object */
     
     // Adding controls to the objects
@@ -47,7 +46,7 @@ function init() {
     pmremGenerator.dispose(); // Optimize the render
   
     /* Uncomment if want axes in models for tracking position */
-    /*
+    
     // Adding axes for model position [XYZ]
     const axesHelper = new THREE.AxesHelper(5);
     scene.add(axesHelper);
@@ -57,7 +56,9 @@ function init() {
     const colorBlue = new THREE.Color(0x0000FF);
     const colorGreen = new THREE.Color(0x00FF00);
     // Setting the colors
-    axesHelper.setColors(colorRed, colorBlue, colorGreen );*/
+    axesHelper.setColors(colorRed, colorBlue, colorGreen );
+
+
     // Adding ambient lights on the scene
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Create Abient Lights
     scene.add(ambientLight); // Add to the scene
@@ -73,6 +74,23 @@ function init() {
     directionalLight.shadow.camera.left = -10; // Shadow camera left position
     directionalLight.shadow.camera.right = 10; // Shadow camera right position
     scene.add(directionalLight); // Adding the directional lights on the scene
+
+    const gui = new GUI({ autoPlace: false });
+    gui.domElement.id = 'gui';
+    gui.domElement.style.borderRadius = '2vh';
+    document.getElementById("canvasContainer").appendChild(gui.domElement);
+    const cameraFolder = gui.addFolder('Camera');
+    let cameraControls = {
+        perspectiveView: function () {
+          // Mueve la cámara a una nueva posición
+          model.rotation.set(45, -45, 0);
+          console.log(camera.position);
+          camera.position.set(0, 0, 0);
+          console.log(camera.position);
+          controls.reset();
+        }
+      };
+    cameraFolder.add(cameraControls, 'perspectiveView').name('Perspective View');
 }
 
 const loader = new GLTFLoader();

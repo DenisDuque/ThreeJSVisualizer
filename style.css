@@ -3,7 +3,9 @@
     padding: 0;
 }
 
-#modelContainer {
+
+canvas {
+    border: 2px solid black;
     width: 50%; /* Custom position */
     height: 100%; /* Custom position */
 }
@@ -19,10 +21,6 @@ button {
     cursor: pointer;
     background-repeat: no-repeat;
     background-size: cover;
-}
-
-#gizmosBtn {
-    background-image: url("src/img/360.png");
 }
 
 #flipBtn {

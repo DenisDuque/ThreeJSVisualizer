@@ -3,11 +3,13 @@ import { ArcballControls } from '../node_modules/three/examples/jsm/controls/Arc
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from '../node_modules/three/examples/jsm/environments/RoomEnvironment';
 
-var camera, scene, renderer, controls, directionalLight, model;
+var camera, scene, renderer, controls, directionalLight, model, modelCopy;
 function init() {
     // Creates new Scene
     scene = new THREE.Scene();
-    scene.background = new THREE.Color("Grey"); // Customize background color as preference
+
+    const texture = new THREE.TextureLoader().load("../src/img/gradientBackground.png");
+    scene.background = texture; // Customize background color as preference
 
     // Creates new Camera [PerspectiveCamera(fov, aspect, near, far)]
     camera = new THREE.PerspectiveCamera(15, window.innerWidth / window.innerHeight, 0.1, 1000); // Customize as preference
@@ -75,7 +77,7 @@ function init() {
 
 const loader = new GLTFLoader();
 
-loader.load('../src/3dmodels/redHeel.gltf', (gltf) => {
+loader.load('../src/3dmodels/blackVans.gltf', (gltf) => {
     // El modelo se cargó exitosamente
 
     // Accede al objeto 3D del modelo
@@ -84,6 +86,7 @@ loader.load('../src/3dmodels/redHeel.gltf', (gltf) => {
     // Ajusta la posición, escala, rotación, etc., según sea necesario
     model.position.set(0, 0, 0);
     model.scale.set(1, 1, 1);
+
     // Añade el modelo a la escena
     scene.add(model);
 }, undefined, (error) => {
@@ -103,15 +106,47 @@ function animate() {
 
 // Buttons
 document.addEventListener('DOMContentLoaded', function() {
+    function flipObject(obj) {
+        const scale = new THREE.Vector3(1, 1, 1);
+        scale.z *= -1;
+        obj.scale.multiply(scale);
+    }
+    
 
-    var gizmosBtn = document.getElementById('gizmosBtn');
-    gizmosBtn.addEventListener('click', function() {
-        alert('¡Has hecho clic en el botón!');
-    });
+    function showBoth() {
+        modelCopy = model.clone(true);
+        flipObject(model);
+        scene.add(modelCopy);
+        model.position.set(0, 0, 0.5);
+        modelCopy.position.set(0, 0, -0.5);
+    }
+    
+    function resetFlipModel() {
+        model.position.set(0, 0, 0);
+        scene.remove(modelCopy);
+    }
 
+    var flipCont = 0;
     var flipBtn = document.getElementById('flipBtn');
     flipBtn.addEventListener('click', function() {
-        alert('¡Has hecho clic en el botón!');
+        
+        switch (flipCont) {
+            case 0:
+                flipObject(model);
+                break;
+
+            case 1:
+                showBoth();
+                break;
+                
+            case 2:
+                resetFlipModel();
+                break;
+
+            default:
+                break;
+        }
+        flipCont = (flipCont + 1) % 3;
     });
 
     var resetBtn = document.getElementById('resetBtn');
@@ -123,6 +158,12 @@ document.addEventListener('DOMContentLoaded', function() {
             resetBtn.style.transform = "rotate(0deg)";
             resetBtn.style.transition = 'scale 0.8s ease';
         }, 800);
+        if (flipCont == 1) {
+            flipObject(model);
+        } else if (flipCont == 2) {
+            resetFlipModel();
+        }
+        flipCont = 0;
         model.position.set(0, 0, 0);
     });
 });

@@ -2,14 +2,13 @@ import * as THREE from 'three';
 import { ArcballControls } from '../node_modules/three/examples/jsm/controls/ArcballControls.js';
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from '../node_modules/three/examples/jsm/environments/RoomEnvironment';
-import { GUI } from 'dat.gui';
 var camera, scene, renderer, controls, directionalLight, model, modelCopy;
 function init() {
     // Creates new Scene
     scene = new THREE.Scene();
 
-    const texture = new THREE.TextureLoader().load("../src/img/gradientBackground.png");
-    scene.background = texture; // Customize background color as preference
+    var backgroundColor = new THREE.Color(0xECECEC);
+    scene.background = backgroundColor; // Customize background color as preference
 
     // Creates new Camera [PerspectiveCamera(fov, aspect, near, far)]
     camera = new THREE.PerspectiveCamera(15, window.innerWidth / window.innerHeight, 0.1, 1000); // Customize as preference
@@ -17,7 +16,14 @@ function init() {
     // Creates new Render
     renderer = new THREE.WebGLRenderer();
     // Set render size
-    renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8); // Customize as preference
+    renderer.setSize(window.innerWidth, window.innerHeight); // Customize as preference
+
+    window.addEventListener('resize', function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
     renderer.shadowMap.enabled = true; // Enable shadows
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Shadow type 
     renderer.toneMapping = THREE.ACESFilmicToneMapping; // Shadow effect
@@ -45,7 +51,7 @@ function init() {
     scene.environment = pmremGenerator.fromScene( environment ).texture; // Adds the textures that the environment creates on the scene
     pmremGenerator.dispose(); // Optimize the render
   
-    /* Uncomment if want axes in models for tracking position */
+    /* Uncomment if want axes in models for tracking position 
     
     // Adding axes for model position [XYZ]
     const axesHelper = new THREE.AxesHelper(5);
@@ -56,7 +62,7 @@ function init() {
     const colorBlue = new THREE.Color(0x0000FF);
     const colorGreen = new THREE.Color(0x00FF00);
     // Setting the colors
-    axesHelper.setColors(colorRed, colorBlue, colorGreen );
+    axesHelper.setColors(colorRed, colorBlue, colorGreen );*/
 
 
     // Adding ambient lights on the scene
@@ -74,23 +80,6 @@ function init() {
     directionalLight.shadow.camera.left = -10; // Shadow camera left position
     directionalLight.shadow.camera.right = 10; // Shadow camera right position
     scene.add(directionalLight); // Adding the directional lights on the scene
-
-    const gui = new GUI({ autoPlace: false });
-    gui.domElement.id = 'gui';
-    gui.domElement.style.borderRadius = '2vh';
-    document.getElementById("canvasContainer").appendChild(gui.domElement);
-    const cameraFolder = gui.addFolder('Camera');
-    let cameraControls = {
-        perspectiveView: function () {
-          // Mueve la cámara a una nueva posición
-          model.rotation.set(45, -45, 0);
-          console.log(camera.position);
-          camera.position.set(0, 0, 0);
-          console.log(camera.position);
-          controls.reset();
-        }
-      };
-    cameraFolder.add(cameraControls, 'perspectiveView').name('Perspective View');
 }
 
 const loader = new GLTFLoader();

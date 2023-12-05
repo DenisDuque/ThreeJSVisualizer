@@ -1,12 +1,13 @@
 * {
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 
 canvas {
     border: 2px solid black;
-    width: 50%; /* Custom position */
+    width: 100%; /* Custom position */
     height: 100%; /* Custom position */
 }
 
@@ -21,14 +22,24 @@ button {
     cursor: pointer;
     background-repeat: no-repeat;
     background-size: cover;
+    user-select: none;
+}
+
+#hud {
+    position: absolute;
+    justify-self: right;
+    left: 93vw;
+    top: 3vh;
+    background: transparent;
+    user-select: none;
 }
 
 #flipBtn {
-    background-image: url("src/img/flip-horizontal.png");   
+    background-image: url("src/img/flip.png");   
 }
 
 #resetBtn {
-    background-image: url("src/img/flechas-circulares.png");
+    background-image: url("src/img/reset.png");
 }
 
 button:hover {

@@ -84,7 +84,11 @@ function init() {
 
 const loader = new GLTFLoader();
 
-loader.load('../src/3dmodels/blackVans.gltf', (gltf) => {
+const urlParams = new URLSearchParams(window.location.search);
+const modelURL = '../src/3dmodels/' + urlParams.get('model') + '.gltf';
+console.log(modelURL);
+
+loader.load(modelURL, (gltf) => {
     // El modelo se cargó exitosamente
 
     // Accede al objeto 3D del modelo

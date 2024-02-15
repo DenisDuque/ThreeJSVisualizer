@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { ArcballControls } from '../node_modules/three/examples/jsm/controls/ArcballControls.js';
-import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import { RoomEnvironment } from '../node_modules/three/examples/jsm/environments/RoomEnvironment';
+import { ArcballControls } from 'three/examples/jsm/controls/ArcballControls.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 var camera, scene, renderer, controls, directionalLight, model, modelCopy;
 function init() {
     // Creates new Scene

@@ -3,10 +3,16 @@
 	<head>
 		<meta charset="utf-8">
 		<title>ThreeJS Visualizer</title>
-		<script type="module" src="./js/button.js"></script>
-		
+		<link rel="stylesheet" href="visualizer.css">
+		<link rel="stylesheet" href="visualizer-gui-style.css">
+		<script type="module" src="./js/visualizer.js"></script>
 	</head>
 	<body>
-		<button id="visualizerBtn">Ir al visualizador</button>
+		<div id="hud">
+			<button id="flipBtn"></button>
+			<button id="resetBtn"></button>
+		</div>
+		<div id="canvasContainer">
+		</div>
 	</body>
 </html>
